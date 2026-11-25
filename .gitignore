@@ -1,0 +1,8 @@
+node_modules/
+.test-build/
+linklens.zip
+# build output (made by `npm run build`)
+extension/content.js
+extension/popup.js
+demo/demo.js
+demo/icons/
