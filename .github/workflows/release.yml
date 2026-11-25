@@ -1,0 +1,28 @@
+# Builds the extension and publishes linklens.zip as a GitHub release.
+# Run it from the Actions tab ("Run workflow"), or push a tag like v0.1.0.
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install && npm test && npm run zip
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="v$(node -p "require('./extension/manifest.json').version")"
+          gh release view "$VERSION" >/dev/null 2>&1 && gh release upload "$VERSION" linklens.zip --clobber \
+            || gh release create "$VERSION" linklens.zip --title "LinkLens $VERSION" \
+                 --notes "Unzip, open chrome://extensions, enable Developer mode, click Load unpacked and pick the folder."
