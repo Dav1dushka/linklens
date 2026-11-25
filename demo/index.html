@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LinkLens · see where a link really goes</title>
+<meta name="description" content="A browser extension that flags phishing links: look-alike domains, hidden destinations and other tricks. Try it on this page.">
+<link rel="icon" href="icons/32.png">
+<style>
+  :root { color-scheme: dark; --bg: #0b0a12; --panel: #12111c; --line: rgba(255,255,255,.09); --ink: #ecebf5; --mute: #9a95b0; --accent: #b9a6ff; --red: #ff5c7a; }
+  * { box-sizing: border-box; min-width: 0; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  header.top { padding: 48px 0 28px; display: grid; gap: 14px; }
+  .brand { display: flex; gap: 10px; align-items: center; font-weight: 800; letter-spacing: .02em; }
+  .brand img { width: 28px; height: 28px; }
+  h1 { margin: 0; font-size: clamp(34px, 5vw, 56px); line-height: 1.05; letter-spacing: -.02em; max-width: 16ch; }
+  .lead { margin: 0; color: var(--mute); max-width: 60ch; font-size: 18px; }
+  .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); text-decoration: none; font-weight: 600; cursor: pointer; font-size: 15px; }
+  .btn.primary { background: var(--accent); color: #12111c; border-color: transparent; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 20px; align-items: start; padding-bottom: 40px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; }
+  .label { font-size: 13px; color: var(--mute); padding: 14px 18px 0; }
+  /* sample email */
+  .mail { padding: 8px 18px 20px; }
+  .mail-head { display: grid; gap: 2px; padding: 10px 0 14px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .mail-head b { font-size: 17px; }
+  .mail-head span { color: var(--mute); }
+  .mail p { margin: 14px 0; }
+  .mail a { color: #8fb4ff; }
+  .mail .button-link { display: inline-block; padding: 10px 18px; border-radius: 8px; background: #2f63e0; color: #fff; text-decoration: none; font-weight: 600; }
+  .small { font-size: 13px; color: var(--mute); }
+  #blocked { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #1b1a29; border: 1px solid var(--line); padding: 10px 16px; border-radius: 10px; }
+  /* playground */
+  .pg { padding: 4px 18px 18px; display: grid; gap: 12px; }
+  .field { display: grid; gap: 4px; font-size: 13px; color: var(--mute); }
+  .field input { font: 16px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); background: #0b0a12; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-height: 44px; }
+  .field input:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tries { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tries button { font: 12px ui-monospace, monospace; color: var(--ink); background: #1b1a29; border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; cursor: pointer; min-height: 32px; }
+  .tries button:hover { border-color: rgba(255,255,255,.25); }
+  section.how { padding: 8px 0 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  section.how div { padding: 18px; }
+  section.how h2 { margin: 0 0 6px; font-size: 17px; }
+  section.how p { margin: 0; color: var(--mute); font-size: 15px; }
+  ol { margin: 6px 0 0; padding-left: 20px; color: var(--mute); font-size: 15px; }
+  footer { border-top: 1px solid var(--line); padding: 20px 0 40px; color: var(--mute); font-size: 14px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><img src="icons/32.png" alt="">LinkLens</div>
+    <h1>See where a link really goes before you click.</h1>
+    <p class="lead">A Chrome extension that inspects links when you hover them: look-alike domains, letters from other alphabets, hidden destinations behind shortened links, and link text that lies. Everything runs locally; no link ever leaves your browser.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/Dav1dushka/linklens/releases/latest">Download the extension</a>
+      <a class="btn" href="https://github.com/Dav1dushka/linklens">Source on GitHub</a>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="label">Try it: hover the links in this sample email (they never open)</div>
+      <div class="mail" id="inbox">
+        <div class="mail-head">
+          <b>Your account has been limited</b>
+          <span>From: "PayPal Service" &lt;service@paypal-support.example&gt;</span>
+        </div>
+        <p>Dear customer,</p>
+        <p>We noticed unusual activity. To restore access, confirm your details at <a href="https://paypal.com.account-review.xyz/login">https://www.paypal.com/signin</a> within 24 hours.</p>
+        <p><a class="button-link" href="https://xn--pypal-4ve.com/verify">Verify my account</a></p>
+        <p>Track your refund: <a href="https://bit.ly/3refund">bit.ly/3refund</a> · Need help? Visit our <a href="http://192.0.2.44/support">support centre</a>.</p>
+        <p>Download the invoice from <a href="https://www.dropbox.com@files-share.example/invoice.pdf">Dropbox</a>, or sign in with <a href="https://micros0ft-login.com/oauth">Microsoft</a>.</p>
+        <p class="small">Unsubscribe · <a href="https://www.paypal.com/privacy">Privacy</a> · <a href="https://github.com/Dav1dushka/linklens">About this demo</a></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="label">Playground: paste any link</div>
+      <div class="pg">
+        <label class="field">Link address
+          <input id="pg-url" value="https://xn--80ak6aa92e.com/id" spellcheck="false" autocomplete="off">
+        </label>
+        <label class="field">Link text (what the page shows)
+          <input id="pg-text" value="" placeholder="e.g. apple.com/account" spellcheck="false" autocomplete="off">
+        </label>
+        <div class="tries">
+          <button data-try="https://xn--80ak6aa92e.com/id">аррӏе.com</button>
+          <button data-try="https://amaz0n-orders.top/track">amaz0n</button>
+          <button data-try="https://evil.example/login" data-text="https://github.com/login">text ≠ link</button>
+          <button data-try="https://login.microsoftonline.com/">real Microsoft</button>
+          <button data-try="https://steamcommunity.com.gift-claim.click/">steam gift</button>
+        </div>
+        <div id="pg-card"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="how">
+    <div class="panel"><h2>Who owns the site?</h2><p>The card shows the full address with the part that decides ownership in bold. In <code>paypal.com.account-review.xyz</code> the owner is <b>account-review.xyz</b>.</p></div>
+    <div class="panel"><h2>Letters that lie</h2><p>Punycode names are decoded, so <code>xn--pypal-4ve.com</code> shows up as <code>pаypal.com</code> with a Cyrillic "а", and is matched against frequently impersonated brands.</p></div>
+    <div class="panel"><h2>Install (2 minutes)</h2><ol><li>Download <code>linklens.zip</code> from Releases and unzip it.</li><li>Open <code>chrome://extensions</code>, switch on Developer mode.</li><li>Click <b>Load unpacked</b> and choose the folder.</li></ol></div>
+  </section>
+
+  <footer>LinkLens is open source (MIT). Sample email and domains are made up for the demo.</footer>
+</div>
+<div id="blocked" hidden>Demo links are not opened.</div>
+<script src="demo.js"></script>
+</body>
+</html>
