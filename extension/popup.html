@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LinkLens</title>
+<style>
+  body { margin: 0; width: 340px; font: 13px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #ecebf5; background: #12111c; }
+  header { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.08); font-weight: 700; font-size: 15px; }
+  header img { width: 20px; height: 20px; }
+  #verdict { margin: 12px 14px 4px; font-weight: 600; }
+  #verdict.ok { color: #3ecf8e; } #verdict.caution { color: #f5b942; } #verdict.danger { color: #ff5c7a; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 14px; }
+  .stats div { padding: 8px; border-radius: 10px; background: #1b1a29; text-align: center; }
+  .stats b { display: block; font-size: 20px; }
+  .stats span { color: #9a95b0; font-size: 12px; }
+  ul { list-style: none; margin: 0; padding: 0 14px; max-height: 220px; overflow: auto; display: grid; gap: 6px; }
+  li { padding: 7px 9px; border-radius: 8px; background: #1b1a29; box-shadow: inset 3px 0 #f5b942; }
+  li.danger { box-shadow: inset 3px 0 #ff5c7a; }
+  li b { display: block; font-family: ui-monospace, monospace; font-weight: 600; word-break: break-all; }
+  li span { color: #a9a4bf; font-size: 12px; }
+  fieldset { border: 0; margin: 10px 0 0; padding: 10px 14px 14px; border-top: 1px solid rgba(255,255,255,.08); display: grid; gap: 8px; }
+  label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+</style>
+</head>
+<body>
+  <header><img src="icons/32.png" alt="">LinkLens</header>
+  <p id="verdict">Scanning this page…</p>
+  <div class="stats">
+    <div><b id="total">–</b><span>links</span></div>
+    <div><b id="caution">–</b><span>caution</span></div>
+    <div><b id="danger">–</b><span>danger</span></div>
+  </div>
+  <ul id="list"></ul>
+  <fieldset>
+    <label><input type="checkbox" id="highlight"> Outline risky links on pages</label>
+    <label><input type="checkbox" id="showSafe"> Show the card for safe links too</label>
+  </fieldset>
+  <script src="popup.js"></script>
+</body>
+</html>
